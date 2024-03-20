@@ -8,7 +8,7 @@ columns_to_remove = ['id', 'cat_id', 'store_id', 'state_id', 'd_1940', 'd_1941']
 df.drop(columns=columns_to_remove, inplace=True)
 
 # Calculate the sum of every 7 days and store them in new columns
-for i in range(11101, 11378):
+for i in range(11101, 11354):
     start_col = 'd_' + str((i - 11101) * 7 + 1)
     end_col = 'd_' + str((i - 11101) * 7 + 7)
     df[str(i)] = df.loc[:, start_col:end_col].sum(axis=1)
