@@ -16,6 +16,28 @@ for i in range(11101, 11354):
 # Drop the original day columns
 df.drop(df.columns[2:1941], axis=1, inplace=True)
 
-# Write the modified DataFrame to a new CSV file
-df.to_csv('modified_sales.csv', index=False)
+# Calculate mean values for each dept_id
+dept_mean = df.groupby('dept_id').mean().reset_index()
+
+# Create a new DataFrame to store the mean values for each dept_id
+new_df = pd.DataFrame(columns=df.columns)
+
+# Iterate over dept_id and append rows to new_df
+for dept_id in dept_mean['dept_id']:
+    # Create a row with dept_id as item_id and mean values for other columns
+    row = pd.Series({'item_id': dept_id})
+    for col in df.columns:
+        if col != 'item_id' and col != 'dept_id':
+            row[col] = round(dept_mean.loc[dept_mean['dept_id'] == dept_id, col].values[0], 2)
+        elif col == 'dept_id':
+            row[col] = dept_id
+            # Append the row to new_df
+    new_df = new_df.append(row, ignore_index=True)
+
+# Concatenate new_df with original DataFrame
+final_df = pd.concat([df, new_df], ignore_index=True)
+
+# Save the modified DataFrame to a new CSV file
+final_df.to_csv('modified_sales.csv', index=False)
+
 
