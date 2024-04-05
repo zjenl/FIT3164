@@ -7,7 +7,7 @@ percent_change_df = df.iloc[:, 2:].pct_change(axis=1) * 100
 percent_change_df = percent_change_df.round(2)
 
 # Percentage of price changes
-percent_change_df['fluctuation'] = (percent_change_df != 0).sum(axis=1) / 253 * 100
+percent_change_df['fluctuation'] = (percent_change_df.notna().sum(axis=1)-(percent_change_df == 0).sum(axis=1))/253*100
 percent_change_df['fluctuation'] = percent_change_df['fluctuation'].round(2)
 
 # Concatenate the first two string columns with the percent_change_df
