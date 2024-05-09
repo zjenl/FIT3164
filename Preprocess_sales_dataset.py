@@ -4,7 +4,7 @@ df = pd.read_csv('M5_preprocessed/sales_train_evaluation.csv')
 
 # We want to convert the sales volume from daily to weekly to match the price change
 # First we will drop unnecessary columns
-columns_to_remove = ['id', 'cat_id', 'store_id', 'state_id', 'd_1940', 'd_1941']
+columns_to_remove = ['id', 'cat_id', 'state_id', 'd_1940', 'd_1941']
 df.drop(columns=columns_to_remove, inplace=True)
 
 # Calculate the sum of every 7 days and store them in new columns
@@ -14,7 +14,7 @@ for i in range(11101, 11354):
     df[str(i)] = df.loc[:, start_col:end_col].sum(axis=1)
 
 # Drop the original day columns
-df.drop(df.columns[2:1941], axis=1, inplace=True)
+df.drop(df.columns[3:1942], axis=1, inplace=True)
 
 # Calculate mean values for each dept_id
 dept_mean = df.groupby('dept_id').mean().reset_index()
@@ -27,11 +27,13 @@ for dept_id in dept_mean['dept_id']:
     # Create a row with dept_id as item_id and mean values for other columns
     row = pd.Series({'item_id': dept_id})
     for col in df.columns:
-        if col != 'item_id' and col != 'dept_id':
+        if col != 'item_id' and col != 'dept_id' and col != 'store_id':
             row[col] = round(dept_mean.loc[dept_mean['dept_id'] == dept_id, col].values[0], 2)
         elif col == 'dept_id':
             row[col] = dept_id
-            # Append the row to new_df
+        elif col == 'store_id':
+            row[col] = dept_id
+    # Append the row to new_df
     new_df = new_df.append(row, ignore_index=True)
 
 # Concatenate new_df with original DataFrame
